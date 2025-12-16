@@ -1,0 +1,419 @@
+#!/usr/bin/env bash
+# Triggered by pywal after every run; refresh themes so everything follows the wallpaper.
+set -euo pipefail
+
+# Some desktop sessions drop /usr/sbin from PATH; add it so papirus-folders is found.
+PATH="$PATH:/usr/sbin:/sbin"
+
+CACHE="$HOME/.cache/wal"
+WAL_JSON="$CACHE/colors.json"
+WAL_GTK="$CACHE/colors-gtk.css"
+
+# Keep GTK apps (e.g., Thunar) in sync by pointing gtk.css at wal's GTK CSS.
+if [ -f "$WAL_GTK" ]; then
+    mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+    ln -sf "$WAL_GTK" "$HOME/.config/gtk-3.0/colors-gtk.css"
+    cat > "$HOME/.config/gtk-3.0/gtk.css" <<'EOF'
+@import url("colors-gtk.css");
+
+* {
+  background-color: @background;
+  color: @foreground;
+}
+EOF
+    ln -sf "$WAL_GTK" "$HOME/.config/gtk-4.0/colors-gtk.css"
+    cat > "$HOME/.config/gtk-4.0/gtk.css" <<'EOF'
+@import url("colors-gtk.css");
+
+* {
+  background-color: @background;
+  color: @foreground;
+}
+EOF
+fi
+
+# Generate a KDE color scheme from wal for Dolphin/Qt apps and set it as current.
+if [ -f "$WAL_JSON" ]; then
+python - "$WAL_JSON" <<'PY'
+from pathlib import Path
+import json
+import subprocess
+import sys
+import shutil
+
+wal_json = Path(sys.argv[1])
+data = json.loads(wal_json.read_text())
+colors = data.get("colors", {})
+special = data.get("special", {})
+
+def pick(key, fallback):
+    return colors.get(key, fallback)
+
+bg = special.get("background", pick("color0", "#000000"))
+fg = special.get("foreground", pick("color7", "#ffffff"))
+accent = pick("color4", pick("color2", fg))
+alt_bg = pick("color1", bg)
+neg = pick("color1", "#ff5555")
+pos = pick("color2", "#50fa7b")
+neutral = pick("color3", accent)
+visited = pick("color5", accent)
+
+def to_rgb(hexstr: str) -> str:
+    h = hexstr.lstrip("#")
+    return ",".join(str(int(h[i:i+2], 16)) for i in (0, 2, 4))
+
+bg_rgb = to_rgb(bg)
+alt_rgb = to_rgb(alt_bg)
+fg_rgb = to_rgb(fg)
+accent_rgb = to_rgb(accent)
+neg_rgb = to_rgb(neg)
+pos_rgb = to_rgb(pos)
+neutral_rgb = to_rgb(neutral)
+visited_rgb = to_rgb(visited)
+
+scheme = f"""[General]
+Name=Wal
+ColorScheme=Wal
+
+[ColorEffects:Disabled]
+Color=56,56,56
+ColorAmount=0
+ColorEffect=0
+ContrastAmount=0.65
+ContrastEffect=1
+IntensityAmount=0.1
+IntensityEffect=2
+
+[ColorEffects:Inactive]
+ChangeSelectionColor=true
+Color={fg_rgb}
+ColorAmount=0.025
+ColorEffect=2
+ContrastAmount=0.1
+ContrastEffect=2
+Enable=false
+IntensityAmount=0
+IntensityEffect=0
+
+[Colors:Button]
+BackgroundAlternate={alt_rgb}
+BackgroundNormal={bg_rgb}
+DecorationFocus={accent_rgb}
+DecorationHover={accent_rgb}
+ForegroundActive={accent_rgb}
+ForegroundInactive={fg_rgb}
+ForegroundLink={accent_rgb}
+ForegroundNegative={neg_rgb}
+ForegroundNeutral={neutral_rgb}
+ForegroundNormal={fg_rgb}
+ForegroundPositive={pos_rgb}
+ForegroundVisited={visited_rgb}
+
+[Colors:Complementary]
+BackgroundAlternate={alt_rgb}
+BackgroundNormal={bg_rgb}
+DecorationFocus={accent_rgb}
+DecorationHover={accent_rgb}
+ForegroundActive={accent_rgb}
+ForegroundInactive={fg_rgb}
+ForegroundLink={accent_rgb}
+ForegroundNegative={neg_rgb}
+ForegroundNeutral={neutral_rgb}
+ForegroundNormal={fg_rgb}
+ForegroundPositive={pos_rgb}
+ForegroundVisited={visited_rgb}
+
+[Colors:Header]
+BackgroundAlternate={alt_rgb}
+BackgroundNormal={bg_rgb}
+DecorationFocus={accent_rgb}
+DecorationHover={accent_rgb}
+ForegroundActive={accent_rgb}
+ForegroundInactive={fg_rgb}
+ForegroundLink={accent_rgb}
+ForegroundNegative={neg_rgb}
+ForegroundNeutral={neutral_rgb}
+ForegroundNormal={fg_rgb}
+ForegroundPositive={pos_rgb}
+ForegroundVisited={visited_rgb}
+
+[Colors:Selection]
+BackgroundAlternate={accent_rgb}
+BackgroundNormal={accent_rgb}
+ForegroundActive={bg_rgb}
+ForegroundInactive={bg_rgb}
+ForegroundLink={bg_rgb}
+ForegroundNegative={bg_rgb}
+ForegroundNeutral={bg_rgb}
+ForegroundNormal={bg_rgb}
+ForegroundPositive={bg_rgb}
+ForegroundVisited={bg_rgb}
+
+[Colors:Tooltip]
+BackgroundAlternate={alt_rgb}
+BackgroundNormal={bg_rgb}
+DecorationFocus={accent_rgb}
+DecorationHover={accent_rgb}
+ForegroundActive={accent_rgb}
+ForegroundInactive={fg_rgb}
+ForegroundLink={accent_rgb}
+ForegroundNegative={neg_rgb}
+ForegroundNeutral={neutral_rgb}
+ForegroundNormal={fg_rgb}
+ForegroundPositive={pos_rgb}
+ForegroundVisited={visited_rgb}
+
+[Colors:View]
+BackgroundAlternate={alt_rgb}
+BackgroundNormal={bg_rgb}
+DecorationFocus={accent_rgb}
+DecorationHover={accent_rgb}
+ForegroundActive={accent_rgb}
+ForegroundInactive={fg_rgb}
+ForegroundLink={accent_rgb}
+ForegroundNegative={neg_rgb}
+ForegroundNeutral={neutral_rgb}
+ForegroundNormal={fg_rgb}
+ForegroundPositive={pos_rgb}
+ForegroundVisited={visited_rgb}
+
+[Colors:Window]
+BackgroundAlternate={alt_rgb}
+BackgroundNormal={bg_rgb}
+DecorationFocus={accent_rgb}
+DecorationHover={accent_rgb}
+ForegroundActive={accent_rgb}
+ForegroundInactive={fg_rgb}
+ForegroundLink={accent_rgb}
+ForegroundNegative={neg_rgb}
+ForegroundNeutral={neutral_rgb}
+ForegroundNormal={fg_rgb}
+ForegroundPositive={pos_rgb}
+ForegroundVisited={visited_rgb}
+
+[Metadata]
+Name=Wal
+Comment=Generated by wal
+KDE-PluginInfo-Name=Wal
+"""
+
+target = Path.home() / ".local/share/color-schemes/Wal.colors"
+target.parent.mkdir(parents=True, exist_ok=True)
+target.write_text(scheme)
+
+# Set Wal as the active KDE color scheme if possible.
+def run_cmd(cmd):
+    if not shutil.which(cmd[0]):
+        return
+    subprocess.run(
+        cmd,
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+run_cmd(["plasma-apply-colorscheme", "Wal"])
+run_cmd(["kwriteconfig5", "--file", "kdeglobals", "--group", "General", "--key", "ColorScheme", "Wal"])
+run_cmd([
+    "dbus-send", "--session", "--dest=org.kde.KGlobalSettings", "--type=method_call",
+    "/KGlobalSettings", "org.kde.KGlobalSettings.notifyChange", "int32:1", "int32:0"
+])
+PY
+fi
+
+# Recolor Papirus folders to match the current wal accent (nearest Papirus color)
+PAPIRUS_FOLDERS_BIN="$(command -v papirus-folders || true)"
+if [ -n "$PAPIRUS_FOLDERS_BIN" ] && [ -f "$WAL_JSON" ]; then
+    pick_accent_name() {
+        python - "$WAL_JSON" <<'PY'
+from __future__ import annotations
+from pathlib import Path
+import colorsys
+import json
+import math
+import sys
+
+wal_json = Path(sys.argv[1])
+data = json.loads(wal_json.read_text())
+colors = data.get("colors", {})
+
+# Use the most saturated palette color as the "accent"
+def hex_to_rgb(h: str):
+    h = h.lstrip("#")
+    return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+
+def saturation(hex_color: str) -> float:
+    r, g, b = [c / 255.0 for c in hex_to_rgb(hex_color)]
+    return colorsys.rgb_to_hls(r, g, b)[2]
+
+palette = [c for _, c in sorted(colors.items()) if c]
+palette = [c for c in palette if c.startswith("#")]
+
+accent_hex = None
+if palette:
+    accent_hex = max(palette, key=saturation)
+
+if not accent_hex:
+    sys.exit(1)
+
+papirus_palette = {
+    "blue": "#2196f3",
+    "cyan": "#00bcd4",
+    "teal": "#009688",
+    "green": "#4caf50",
+    "yellow": "#ffeb3b",
+    "orange": "#ff9800",
+    "deeporange": "#ff5722",
+    "red": "#f44336",
+    "pink": "#e91e63",
+    "magenta": "#ba68c8",
+    "violet": "#673ab7",
+    "indigo": "#3f51b5",
+    "bluegrey": "#607d8b",
+    "nordic": "#88c0d0",
+    "brown": "#795548",
+    "palebrown": "#a1887f",
+    "paleorange": "#ffb74d",
+    "breeze": "#3daee9",
+    "carmine": "#ad1457",
+    "yaru": "#e95420",
+    "grey": "#9e9e9e",
+    "white": "#eeeeee",
+    "black": "#263238",
+}
+
+def distance(c1: str, c2: str) -> float:
+    r1, g1, b1 = hex_to_rgb(c1)
+    r2, g2, b2 = hex_to_rgb(c2)
+    return math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2)
+
+closest = min(papirus_palette.items(), key=lambda kv: distance(accent_hex, kv[1]))
+print(closest[0])
+PY
+    }
+
+    current_icon_theme() {
+        # XFCE/Thunar
+        if command -v xfconf-query >/dev/null 2>&1; then
+            xfconf-query -c xsettings -p /Net/IconThemeName 2>/dev/null || true
+            return
+        fi
+        # GNOME/GTK fallback
+        if command -v gsettings >/dev/null 2>&1; then
+            gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null | tr -d "'" || true
+            return
+        fi
+        # KDE
+        if command -v kreadconfig5 >/dev/null 2>&1; then
+            kreadconfig5 --file kdeglobals --group Icons --key Theme 2>/dev/null || true
+            return
+        fi
+        printf '%s\n' "Papirus-Dark"
+    }
+
+    apply_color() {
+        local theme_name="$1"
+        local accent_name="$2"
+        local theme_arg="$theme_name"
+
+        # Prefer user-local theme copy to avoid sudo requirement
+        if [ -d "$HOME/.local/share/icons/$theme_name" ]; then
+            theme_arg="$HOME/.local/share/icons/$theme_name"
+        fi
+
+        # Recolor synchronously so the files are ready before we trigger reloads.
+        # Fast path: skip icon cache rebuild (-u) to save a few seconds; toggle/theme reloads handle repaint.
+        papirus_args=(-C "$accent_name" --theme "$theme_arg")
+        if [ "${PAPIRUS_FULL_UPDATE:-0}" -eq 1 ]; then
+            papirus_args+=(-u)
+        fi
+        "$PAPIRUS_FOLDERS_BIN" "${papirus_args[@]}" >/dev/null 2>&1 || true
+        if [ "${WAL_HEAVY_ICON_REFRESH:-0}" -eq 1 ]; then
+            # Optional: rebuild icon cache (can be slow). Enable by WAL_HEAVY_ICON_REFRESH=1.
+            if command -v gtk-update-icon-cache >/dev/null 2>&1 && [ -d "$theme_arg" ] && [ -w "$theme_arg" ]; then
+                gtk-update-icon-cache -f -q "$theme_arg" >/dev/null 2>&1 || true
+            fi
+            if command -v kbuildsycoca5 >/dev/null 2>&1; then
+                kbuildsycoca5 --noincremental >/dev/null 2>&1 || true
+            fi
+        fi
+    }
+
+    accent_name="$(pick_accent_name || true)"
+    if [ -n "$accent_name" ]; then
+        theme_to_recolor="$(current_icon_theme)"
+        if [ -z "$theme_to_recolor" ]; then
+            theme_to_recolor="Papirus-Dark"
+        fi
+        apply_color "$theme_to_recolor" "$accent_name"
+
+        # Nudge KDE/Qt apps (Dolphin, Konsole) to reload icon cache without restart.
+        dbus-send --session --dest=org.kde.KGlobalSettings --type=method_call \
+            /KGlobalSettings org.kde.KGlobalSettings.notifyChange int32:4 int32:0 \
+            >/dev/null 2>&1 || true &
+    fi
+fi
+
+# Nudge running file managers to pick up the recolored folders without a restart.
+refresh_icon_theme() {
+    target_theme="$1"
+
+    # XFCE/GTK (Thunar) – toggle icon theme to force reload.
+    if command -v xfconf-query >/dev/null 2>&1; then
+        current="$(xfconf-query -c xsettings -p /Net/IconThemeName 2>/dev/null || true)"
+        if [ "$current" = "$target_theme" ] || [ -z "$current" ]; then
+            xfconf-query -c xsettings -p /Net/IconThemeName -s "Adwaita" >/dev/null 2>&1 || true
+        fi
+        xfconf-query -c xsettings -p /Net/IconThemeName -s "$target_theme" >/dev/null 2>&1 || true
+    elif command -v gsettings >/dev/null 2>&1; then
+        # GNOME/GTK fallback if schemas are available.
+        schema="org.gnome.desktop.interface"
+        if gsettings writable "$schema" icon-theme >/dev/null 2>&1; then
+            current="$(gsettings get "$schema" icon-theme 2>/dev/null || true)"
+            if [ "$current" = "'$target_theme'" ] || [ -z "$current" ]; then
+                gsettings set "$schema" icon-theme "Adwaita" >/dev/null 2>&1 || true
+            fi
+            gsettings set "$schema" icon-theme "$target_theme" >/dev/null 2>&1 || true
+        fi
+    fi
+
+    # KDE/Qt (Dolphin) – poke icon change + DBus notify so running apps repaint.
+    if command -v kwriteconfig5 >/dev/null 2>&1; then
+        kwriteconfig5 --file kdeglobals --group Icons --key Theme "$target_theme" >/dev/null 2>&1 || true
+    fi
+    dbus-send --session --dest=org.kde.KGlobalSettings --type=method_call \
+        /KGlobalSettings org.kde.KGlobalSettings.notifyChange int32:5 int32:0 \
+        >/dev/null 2>&1 || true &
+}
+
+refresh_icon_theme "${theme_to_recolor:-Papirus-Dark}"
+
+# Reload Qtile so widgets pick up the fresh palette.
+qtile cmd-obj -o cmd -f reload_config >/dev/null 2>&1 || true
+
+# Sync OpenRGB devices (e.g., mouse mat) to the wal accent color.
+OPENRGB_BIN="$(command -v openrgb || true)"
+if [ -n "$OPENRGB_BIN" ] && [ -f "$WAL_JSON" ]; then
+    accent_hex="$(python - "$WAL_JSON" <<'PY' || true
+from pathlib import Path
+import json, sys
+
+data = json.loads(Path(sys.argv[1]).read_text())
+colors = data.get("colors", {})
+for key in ("color1", "color2", "color4", "color5"):
+    val = colors.get(key)
+    if val:
+        print(val.lstrip("#"))
+        break
+PY
+)"
+    accent_hex="${accent_hex//$'\n'/}"
+    if [ -n "$accent_hex" ]; then
+        device_idx="${WAL_OPENRGB_DEVICE:-${WAL_OPENRGB_DEVICE_IDX:-0}}"
+        server_arg=()
+        if [ -n "${WAL_OPENRGB_SERVER:-}" ]; then
+            server_arg=(--server "${WAL_OPENRGB_SERVER}")
+        fi
+        "$OPENRGB_BIN" --client "${server_arg[@]}" --device "$device_idx" --color "$accent_hex" >/dev/null 2>&1 || true
+    fi
+fi
