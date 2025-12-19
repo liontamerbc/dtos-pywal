@@ -21,3 +21,5 @@ qtile/__pycache__/
 .idea/
 .vscode/
 *.log
+.venv/
+.pc-venv/

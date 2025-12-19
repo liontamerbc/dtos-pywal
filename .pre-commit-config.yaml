@@ -1,7 +1,26 @@
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: mixed-line-ending
+      - id: ruff
+        files: "^qtile/"
+  - repo: https://github.com/JohnnyMorganz/StyLua
+    rev: v0.20.0
+    hooks:
+      - id: stylua
+        args: ["--check"]
+        files: "\\.lua$"
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: system
+        files: "\\.sh$"
+  - repo: local
+    hooks:
+      - id: shfmt
+        name: shfmt
+        entry: shfmt -d
+        language: system
+        files: "\\.sh$"

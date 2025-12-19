@@ -190,11 +190,10 @@ The installer will continue without that image viewer." 12 70
 fi
 
 PYWAL_PKG=""
-PYWAL_ALREADY_INSTALLED=""
 if pacman -Q python-pywal16 >/dev/null 2>&1; then
-    PYWAL_ALREADY_INSTALLED="python-pywal16"
+    :
 elif pacman -Q python-pywal >/dev/null 2>&1; then
-    PYWAL_ALREADY_INSTALLED="python-pywal"
+    :
 elif pacman -Si python-pywal >/dev/null 2>&1; then
     PYWAL_PKG="python-pywal"
 elif pacman -Si python-pywal16 >/dev/null 2>&1; then
