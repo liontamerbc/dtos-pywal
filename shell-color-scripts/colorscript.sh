@@ -6,6 +6,9 @@ if [[ "$DEV" -gt 0 ]]; then
     DIR_COLORSCRIPTS="./colorscripts"
 else
     DIR_COLORSCRIPTS="/opt/shell-color-scripts/colorscripts"
+    if [[ ! -d "${DIR_COLORSCRIPTS}" && -d "${HOME}/shell-color-scripts/colorscripts" ]]; then
+        DIR_COLORSCRIPTS="${HOME}/shell-color-scripts/colorscripts"
+    fi
 fi
 
 if command -v find &>/dev/null; then
@@ -46,6 +49,10 @@ function _list_blacklist() {
 }
 
 function _random() {
+    if [[ "$length_colorscripts" -le 0 ]]; then
+        echo "No color scripts found in ${DIR_COLORSCRIPTS}."
+        exit 1
+    fi
     declare -i random_index=$RANDOM%$length_colorscripts
     [[ $random_index -eq 0 ]] && random_index=1
 
