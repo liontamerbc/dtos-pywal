@@ -5,6 +5,7 @@ import socket
 import subprocess
 import urllib.request
 from pathlib import Path
+import shutil
 
 os.environ["PATH"] = os.pathsep.join([
     os.environ.get("PATH", ""),
@@ -16,6 +17,12 @@ from libqtile.config import Click, Drag, Group, KeyChord, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
 from typing import List  # noqa: F401
+
+try:
+    import psutil  # noqa: F401
+    HAS_PSUTIL = True
+except Exception:
+    HAS_PSUTIL = False
 
 try:
     # Wayland-only: used to set keyboard layout without setxkbmap
@@ -47,7 +54,7 @@ def start_once():
 # ---------- Basic settings ----------
 
 mod = "mod4"              # SUPER/WIN
-myTerm = "alacritty"
+myTerm = "alacritty" if shutil.which("alacritty") else "xterm"
 myBrowser = "firefox"
 myVirt = "virt-manager"
 myOffice = "libreoffice"
@@ -184,6 +191,53 @@ def move_window_to_group(base, screen_index=None):
             qtile.current_window.togroup(name)
 
     return _inner
+
+
+def detect_primary_interface():
+    """Return a best-guess network interface (non-loopback) or None."""
+    try:
+        entries = [e.name for e in os.scandir("/sys/class/net") if e.is_dir() and e.name != "lo"]
+    except Exception:
+        entries = []
+
+    if not entries:
+        return None
+
+    entries = sorted(entries)
+    for prefix in ("en", "eth", "wl", "wlp"):
+        for name in entries:
+            if name.startswith(prefix):
+                return name
+    return entries[0]
+
+
+def build_net_widget(foreground, background):
+    iface = detect_primary_interface()
+    if HAS_PSUTIL and iface:
+        return widget.Net(
+            interface=iface,
+            format="Net: {down} ↓↑ {up}",
+            foreground=foreground,
+            background=background,
+            padding=5,
+        )
+    text = "Net: N/A" if iface else "Net: no iface"
+    return widget.TextBox(text=text, foreground=foreground, background=background, padding=5)
+
+
+def build_memory_widget(foreground, background):
+    if HAS_PSUTIL:
+        return widget.Memory(
+            foreground=foreground,
+            background=background,
+            mouse_callbacks={"Button1": lambda: qtile.cmd_spawn(myTerm + " -e htop")},
+            measure_mem="G",
+            format="{MemUsed:.1f}/{MemTotal:.1f}",
+            fmt="Mem: {}",
+            padding=5,
+        )
+    return widget.TextBox(text="Mem: N/A", foreground=foreground, background=background, padding=5)
+
 
 # Systray helper
 def build_tray_widget(background):
@@ -614,13 +668,7 @@ def init_widgets_list(visible_groups, include_systray=True):
 
         # Right side status with powerline separators
         powerline(colors[0], colors[3]),
-        widget.Net(
-            interface="wlp6s0",
-            format="Net: {down} ↓↑ {up}",
-            foreground=colors[1],
-            background=colors[3],
-            padding=5,
-        ),
+        build_net_widget(colors[1], colors[3]),
         powerline(colors[3], colors[4]),
         widget.GenPollText(
             func=brimscombe_temp,
@@ -642,17 +690,7 @@ def init_widgets_list(visible_groups, include_systray=True):
             padding=5,
         ),
         powerline(colors[5], colors[6]),
-        widget.Memory(
-            foreground=colors[1],
-            background=colors[6],
-            mouse_callbacks={
-                "Button1": lambda: qtile.cmd_spawn(myTerm + " -e htop")
-            },
-            measure_mem="G",
-            format="{MemUsed:.1f}/{MemTotal:.1f}",
-            fmt="Mem: {}",
-            padding=5,
-        ),
+        build_memory_widget(colors[1], colors[6]),
         powerline(colors[6], colors[7]),
         widget.Volume(
             foreground=colors[1],
