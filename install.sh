@@ -8,7 +8,7 @@
 #   |_____/   |_|   \____/|_____/
 #
 #
-#  DTOS-2025 Installer (Qtile + Awesome)
+#  DTOS-Pywal Installer (Qtile + Awesome)
 #  Inspired by Derek Taylor / DistroTube style
 #
 # This script assumes:
@@ -24,7 +24,7 @@
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LOG_FILE="$HOME/.cache/dtos-2025-install.log"
+LOG_FILE="$HOME/.cache/dtos-pywal-install.log"
 mkdir -p "$(dirname "$LOG_FILE")"
 
 # ---------------------------------------------------------------------------
@@ -64,7 +64,7 @@ textbox=black,lightgray
 # ---------------------------------------------------------------------------
 
 error() {
-    whiptail --title "DTOS-2025 ERROR" --msgbox "$1" 10 70
+    whiptail --title "DTOS-Pywal ERROR" --msgbox "$1" 10 70
     clear
     exit 1
 }
@@ -73,7 +73,7 @@ run_step() {
     local msg="$1"
     shift
     printf "\n[%s] %s\n" "$(date -Iseconds)" "$msg" >>"$LOG_FILE"
-    whiptail --title "DTOS-2025" --infobox "$msg" 7 60
+    whiptail --title "DTOS-Pywal" --infobox "$msg" 7 60
     if "$@" >>"$LOG_FILE" 2>&1; then
         return 0
     fi
@@ -113,7 +113,7 @@ install_weather_icons_manual() {
 # ---------------------------------------------------------------------------
 
 # Welcome screen
-whiptail --title "Installing DTOS-2025!" --msgbox "\
+whiptail --title "Installing DTOS-Pywal!" --msgbox "\
 This script will set up a DT-style tiling desktop
 (Xmonad, AwesomeWM and/or Qtile) plus tools and configs.
 
@@ -121,7 +121,7 @@ You will be asked a few questions before anything changes." 15 70
 
 # Distro warning
 if ! grep -qs 'ID=arch' /etc/os-release; then
-    whiptail --title "Installing DTOS-2025!" --msgbox "\
+    whiptail --title "Installing DTOS-Pywal!" --msgbox "\
 WARNING: This installer is written for Arch Linux
 and Arch-based distributions that use pacman.
 
@@ -129,7 +129,7 @@ Running it on anything else is very likely to break things." 15 72
 fi
 
 # Big caution screen
-whiptail --title "Installing DTOS-2025!" --msgbox "\
+whiptail --title "Installing DTOS-Pywal!" --msgbox "\
 This script installs a large number of packages and
 overwrites some configuration files in your home directory.
 
@@ -161,10 +161,10 @@ if [ "$INSTALL_XMONAD" = "n" ] && [ "$INSTALL_AWESOME" = "n" ] && [ "$INSTALL_QT
 fi
 
 # Final confirmation, like DT's 'Shall we begin installing DTOS?'
-if ! whiptail --title "Installing DTOS-2025!" --yesno "\
-Shall we begin installing DTOS-2025 now?" 10 60; then
+if ! whiptail --title "Installing DTOS-Pywal!" --yesno "\
+Shall we begin installing DTOS-Pywal now?" 10 60; then
     clear
-    echo "DTOS-2025: installation cancelled by user. Nothing changed."
+    echo "DTOS-Pywal: installation cancelled by user. Nothing changed."
     exit 0
 fi
 
@@ -290,7 +290,7 @@ EOF
 # Fonts
 # ---------------------------------------------------------------------------
 
-whiptail --title "DTOS-2025" --infobox "Font installation skipped (disabled in installer)." 7 60
+whiptail --title "DTOS-Pywal" --infobox "Font installation skipped (disabled in installer)." 7 60
 
 # ---------------------------------------------------------------------------
 # SDDM (optional)
@@ -602,19 +602,19 @@ fi
 # Finish
 # ---------------------------------------------------------------------------
 
-whiptail --title "DTOS-2025 Installed" --msgbox "DTOS-2025 installation is complete.
+whiptail --title "DTOS-Pywal Installed" --msgbox "DTOS-Pywal installation is complete.
 
 You can now:
   • Reboot and choose your DTOS window manager (Xmonad / AwesomeWM / Qtile)
   • Or start them from a TTY with startx (if configured)
-Enjoy your DTOS-2025 desktop." 18 72
+Enjoy your DTOS-Pywal desktop." 18 72
 
 if whiptail --title "Reboot Now?" --yesno "Do you want to reboot now?" 8 40; then
     reboot
 fi
 
 clear
-echo "DTOS-2025 installation finished. Reboot when ready."
+echo "DTOS-Pywal installation finished. Reboot when ready."
 
 # Install dunst auto-setup script
 mkdir -p "$HOME/.local/bin"
