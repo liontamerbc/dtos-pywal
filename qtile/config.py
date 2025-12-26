@@ -195,20 +195,38 @@ def move_window_to_group(base, screen_index=None):
 
 def detect_primary_interface():
     """Return a best-guess network interface (non-loopback) or None."""
+    def _pick(candidates):
+        for prefix in ("en", "eth", "wl", "wlp"):
+            for name in candidates:
+                if name.startswith(prefix):
+                    return name
+        return candidates[0]
+
     try:
-        entries = [e.name for e in os.scandir("/sys/class/net") if e.is_dir() and e.name != "lo"]
+        entries = []
+        for entry in os.scandir("/sys/class/net"):
+            if not entry.is_dir() or entry.name == "lo":
+                continue
+            state = None
+            try:
+                with open(os.path.join(entry.path, "operstate")) as f:
+                    state = f.read().strip()
+            except Exception:
+                pass
+            entries.append((entry.name, state))
     except Exception:
         entries = []
 
     if not entries:
         return None
 
-    entries = sorted(entries)
-    for prefix in ("en", "eth", "wl", "wlp"):
-        for name in entries:
-            if name.startswith(prefix):
-                return name
-    return entries[0]
+    # Prefer an interface that is up; fall back to any non-loopback interface.
+    up = sorted([name for name, state in entries if state == "up"])
+    if up:
+        return _pick(up)
+
+    names = sorted([name for name, _ in entries])
+    return _pick(names)
 
 
 def build_net_widget(foreground, background):
