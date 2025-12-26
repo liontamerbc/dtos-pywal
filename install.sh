@@ -210,6 +210,7 @@ core_pkgs=(
     rofi dmenu
     picom starship
     feh xwallpaper swaybg swww
+    maim slop xdotool xclip wl-clipboard grim slurp
     python-dbus-next pacman-contrib
     papirus-icon-theme papirus-folders
     git fzf wget curl unzip
