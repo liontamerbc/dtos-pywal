@@ -59,11 +59,14 @@ chmod +x install.sh
   <li>SDDM: enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
 </ul>
 
-<h3 align="center">🔄 Update The Pack</h3>
+<h3 align="center">🔄 Repack For Sharing (optional)</h3>
 
 ```bash
+rm -f DTOS-Pywal.zip
 zip -r DTOS-Pywal.zip DTOS-Pywal
 ```
+
+<p>If you just clone and use the repo, you can skip this. Run it only when you want to rebuild a distributable zip after making changes.</p>
 
 <h3 align="center">🙏 Credits</h3>
 <ul>
