@@ -878,6 +878,29 @@ awful.spawn.with_shell("/usr/bin/emacs --daemon")
 awful.spawn.with_shell(
 	'if [ -f $HOME/.cache/wall_awesome ]; then xwallpaper --stretch "$(cat $HOME/.cache/wall_awesome)"; fi'
 )
+-- Re-apply pywal colors to match the chosen wallpaper on login
+awful.spawn.with_shell([[
+if command -v wal >/dev/null 2>&1; then
+  wall_cache="$HOME/.cache/wall_awesome"
+  chosen=""
+  if [ -s "$wall_cache" ]; then
+    chosen="$(cat "$wall_cache" 2>/dev/null || true)"
+  elif [ -s "$HOME/.cache/wall_qtile" ]; then
+    chosen="$(cat "$HOME/.cache/wall_qtile" 2>/dev/null || true)"
+  elif [ -d /usr/share/backgrounds/dtos-backgrounds ]; then
+    chosen="$(find /usr/share/backgrounds/dtos-backgrounds -type f | head -n1)"
+  fi
+
+  postrun="$HOME/.config/wal/postrun"
+  if [ -n "$chosen" ] && [ -f "$chosen" ]; then
+    set -- wal -n -q -i "$chosen"
+    [ -x "$postrun" ] && set -- "$@" -o "$postrun"
+    "$@" >/dev/null 2>&1 || wal -n -q -R >/dev/null 2>&1 || true
+  elif [ -f "$HOME/.cache/wal/colors.json" ]; then
+    wal -n -q -R >/dev/null 2>&1 || true
+  fi
+fi
+]])
 --awful.spawn.with_shell("~/.fehbg") -- set last saved feh wallpaper
 --awful.spawn.with_shell("feh --randomize --bg-fill /usr/share/backgrounds/dtos-backgrounds/*") -- feh sets random wallpaper
 --awful.spawn.with_shell("nitrogen --restore") -- if you prefer nitrogen to feh/xwallpaper

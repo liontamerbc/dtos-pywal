@@ -53,7 +53,7 @@ chmod +x install.sh
 <h3 align="center">🎨 After Installation</h3>
 <ul>
   <li>Pywal auto-apply: use the included <code>dm-setbg</code> picker (dmenu/bemenu/wofi). It sets the wallpaper and runs wal immediately so colors follow without extra steps.</li>
-  <li>Login restore: Qtile autostart re-applies wal for your last chosen wallpaper; widgets and GTK/KDE recolor on login.</li>
+  <li>Login restore: Qtile and Awesome autostart re-apply wal for your last chosen wallpaper; bars/widgets and GTK/KDE recolor on login.</li>
   <li>Manual change (optional): if you set a wallpaper outside <code>dm-setbg</code>, run <code>wal -i /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> or <code>~/.config/qtile/apply-wal.sh /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> to sync colors.</li>
   <li>Wallpapers: installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; add your own there (sudo) and they’ll show up in <code>dm-setbg</code>.</li>
   <li>SDDM: enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
