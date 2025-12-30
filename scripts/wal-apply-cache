@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Re-apply pywal from cached wallpaper paths (Awesome/Qtile) for auto-sync.
+set -euo pipefail
+
+pick_wall() {
+  for cache in "$HOME/.cache/wall_awesome" "$HOME/.cache/wall_qtile" "$HOME/.cache/wall"; do
+    if [ -s "$cache" ]; then
+      img="$(cat "$cache" 2>/dev/null || true)"
+      [ -n "$img" ] && [ -f "$img" ] && { printf "%s\n" "$img"; return 0; }
+    fi
+  done
+
+  if [ -d /usr/share/backgrounds/dtos-backgrounds ]; then
+    find /usr/share/backgrounds/dtos-backgrounds -type f | head -n1
+    return 0
+  fi
+
+  return 1
+}
+
+if ! command -v wal >/dev/null 2>&1; then
+  exit 0
+fi
+
+wall_img="$(pick_wall || true)"
+postrun="$HOME/.config/wal/postrun"
+
+if [ -n "$wall_img" ] && [ -f "$wall_img" ]; then
+  set -- wal -n -q -i "$wall_img"
+  [ -x "$postrun" ] && set -- "$@" -o "$postrun"
+  "$@" >/dev/null 2>&1 || wal -n -q -R >/dev/null 2>&1 || true
+else
+  wal -n -q -R >/dev/null 2>&1 || true
+fi
+
+# Refresh Qtile widgets if running (best-effort)
+if command -v qtile >/dev/null 2>&1; then
+  qtile cmd-obj -o cmd -f reload_config >/dev/null 2>&1 || true
+fi

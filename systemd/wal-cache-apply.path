@@ -1,0 +1,10 @@
+[Unit]
+Description=Watch wallpaper cache for pywal updates
+
+[Path]
+PathChanged=%h/.cache/wall_awesome
+PathChanged=%h/.cache/wall_qtile
+PathChanged=%h/.cache/wall
+
+[Install]
+WantedBy=default.target

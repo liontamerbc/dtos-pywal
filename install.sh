@@ -541,6 +541,42 @@ run_step "Seeding pywal colors from a wallpaper (once)..." bash -c '
   fi
 '
 
+# ---------------------------------------------------------------------------
+# Wal helpers: wrapper + systemd watcher
+# ---------------------------------------------------------------------------
+
+run_step "Installing wal wallpaper helpers..." bash -c '
+  mkdir -p "$HOME/.local/bin"
+  if [ -f "'"$SCRIPT_DIR"'/scripts/wal-wallpaper" ]; then
+    cp "'"$SCRIPT_DIR"'/scripts/wal-wallpaper" "$HOME/.local/bin/wal-wallpaper"
+    chmod +x "$HOME/.local/bin/wal-wallpaper"
+  fi
+  if [ -f "'"$SCRIPT_DIR"'/scripts/wal-apply-cache" ]; then
+    cp "'"$SCRIPT_DIR"'/scripts/wal-apply-cache" "$HOME/.local/bin/wal-apply-cache"
+    chmod +x "$HOME/.local/bin/wal-apply-cache"
+  fi
+'
+
+if command -v systemctl >/dev/null 2>&1 && systemctl --user show-environment >/dev/null 2>&1; then
+    run_step "Enabling wal cache watcher (systemd --user)..." bash -c '
+      mkdir -p "$HOME/.config/systemd/user"
+      if [ -f "'"$SCRIPT_DIR"'/systemd/wal-cache-apply.service" ]; then
+        cp "'"$SCRIPT_DIR"'/systemd/wal-cache-apply.service" "$HOME/.config/systemd/user/"
+      fi
+      if [ -f "'"$SCRIPT_DIR"'/systemd/wal-cache-apply.path" ]; then
+        cp "'"$SCRIPT_DIR"'/systemd/wal-cache-apply.path" "$HOME/.config/systemd/user/"
+      fi
+      systemctl --user daemon-reload
+      systemctl --user enable --now wal-cache-apply.path
+    '
+else
+    whiptail --title "Pywal Watcher Skipped" --msgbox "Could not enable the wal cache watcher (systemd --user not available).
+
+You can enable it manually later by copying systemd/wal-cache-apply.* to ~/.config/systemd/user and running:
+  systemctl --user daemon-reload
+  systemctl --user enable --now wal-cache-apply.path" 15 70
+fi
+
 # Default to Papirus-Dark so wal's Papirus recolor hook is visible in GTK/Qt
 run_step "Setting Papirus-Dark as icon theme (GTK/KDE)..." bash -c '
   theme="Papirus-Dark"

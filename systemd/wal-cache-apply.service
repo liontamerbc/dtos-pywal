@@ -1,0 +1,7 @@
+[Unit]
+Description=Apply pywal when wallpaper cache changes
+ConditionUser=!root
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/wal-apply-cache
