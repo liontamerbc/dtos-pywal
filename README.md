@@ -74,6 +74,10 @@ zip -r DTOS-Pywal.zip DTOS-Pywal
   <li>Linux is supposed to be fun — customize everything.</li>
 </ul>
 
+<p align="center" style="font-size:12px;">
+  Licensing: This repo’s additions are GPL-3.0. Bundled components keep their original licenses (dmscripts GPL-3.0, Lain GPL-2.0, shell-color-scripts MIT). Wallpapers have mixed/unknown origins—see NOTICE if you need one removed.
+</p>
+
 <p align="center" style="color:#F1551D; font-family:JetBrains Mono; font-size:18px;">
   ───────────── ✝ ─────────────
 </p>
