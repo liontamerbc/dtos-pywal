@@ -52,9 +52,9 @@ chmod +x install.sh
 
 <h3 align="center">🎨 After Installation</h3>
 <ul>
-  <li>Pywal: run <code>wal -i /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> or <code>~/.config/qtile/apply-wal.sh /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> to recolor the desktop.</li>
-  <li>Hooks: wal templates live in <code>~/.config/wal</code>; terminals and GTK/KDE pick up palettes automatically.</li>
-  <li>Wallpapers: installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; add your own there (sudo) and feed them to wal.</li>
+  <li>Pywal: on login, Qtile autostart re-applies your last wal theme to match the current wallpaper. To change it, run <code>wal -i /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> or <code>~/.config/qtile/apply-wal.sh /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code>.</li>
+  <li>Hooks: wal templates live in <code>~/.config/wal</code>; terminals and GTK/KDE pick up palettes automatically after wal runs.</li>
+  <li>Wallpapers: installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; add your own there (sudo) and let wal/apply-wal use them.</li>
   <li>SDDM: enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
 </ul>
 

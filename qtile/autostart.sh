@@ -31,6 +31,7 @@ dunst &
 WALL_QTILE="$HOME/.cache/wall_qtile"
 WALL_GENERIC="$HOME/.cache/wall"
 WALL_DIR="/usr/share/backgrounds/dtos-backgrounds"
+CHOSEN_WALL=""
 
 set_wallpaper() {
     image_path="$1"
@@ -64,6 +65,7 @@ choose_wallpaper() {
     target_file="$1"
     [ ! -s "$target_file" ] && return 1
     read -r image_path <"$target_file"
+    CHOSEN_WALL="$image_path"
     set_wallpaper "$image_path"
 }
 
@@ -77,7 +79,17 @@ else
     # No valid cache, pick a random DTOS wallpaper
     if [ -d "$WALL_DIR" ]; then
         random_wall=$(find "$WALL_DIR" -type f | shuf -n 1)
+        CHOSEN_WALL="$random_wall"
         set_wallpaper "$random_wall"
+    fi
+fi
+
+# Re-apply pywal colors to match the chosen wallpaper (if pywal is installed)
+if command -v wal >/dev/null 2>&1; then
+    if [ -n "$CHOSEN_WALL" ] && [ -f "$CHOSEN_WALL" ]; then
+        wal -n -q -i "$CHOSEN_WALL" >/dev/null 2>&1 || true
+    elif [ -f "$HOME/.cache/wal/wal" ]; then
+        wal -R -n -q >/dev/null 2>&1 || true
     fi
 fi
 
