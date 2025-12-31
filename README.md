@@ -11,7 +11,7 @@
 <h3 align="center">🛠️ Stack & Contents</h3>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Arch_Linux-C19A3F?style=for-the-badge&logo=archlinux&logoColor=1C1C1C" />
+  <img src="https://img.shields.io/badge/Arch_Linux-8B0000?style=for-the-badge&logo=archlinux&logoColor=F5F5F5" />
   <img src="https://img.shields.io/badge/Qtile_(Python)-7C5E3C?style=for-the-badge&logo=python&logoColor=F5F5F5" />
   <img src="https://img.shields.io/badge/AwesomeWM_(Lua)-1C1C1C?style=for-the-badge&logo=lua&logoColor=C19A3F" />
   <img src="https://img.shields.io/badge/pywal-F1551D?style=for-the-badge&logo=python&logoColor=F5F5F5" />
