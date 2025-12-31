@@ -47,6 +47,7 @@ cd DTOS-Pywal
 chmod +x install.sh
 ./install.sh
 ```
+<p><strong>Quick start:</strong> if you cloned the repo, just run <code>chmod +x install.sh && ./install.sh</code>.</p>
 
 <p align="center">━━✦━━</p>
 
@@ -66,7 +67,7 @@ rm -f DTOS-Pywal.zip
 zip -r DTOS-Pywal.zip DTOS-Pywal
 ```
 
-<p>If you just clone and use the repo, you can skip this. Run it only when you want to rebuild a distributable zip after making changes.</p>
+<p>If you just clone and use the repo, you can skip this. Run it only when you want to rebuild a distributable zip after making changes. Prefer a clean archive? <code>git archive --format=zip -o DTOS-Pywal.zip HEAD</code>.</p>
 
 <h3 align="center">🙏 Credits</h3>
 <ul>
@@ -76,7 +77,7 @@ zip -r DTOS-Pywal.zip DTOS-Pywal
 
 <h4 align="center">📜 Licensing</h4>
 <p align="center" style="font-size:12px;">
-  This repo’s additions are GPL-3.0. Bundled components keep their original licenses (dmscripts GPL-3.0, Lain GPL-2.0, shell-color-scripts MIT). Wallpapers have mixed/unknown origins—see NOTICE if you need one removed.
+  This repo’s additions are GPL-3.0. Bundled components keep their original licenses (dmscripts GPL-3.0, Lain GPL-2.0, shell-color-scripts MIT). Wallpapers have mixed/unknown origins—see <a href="LICENSE">LICENSE</a> and <a href="NOTICE">NOTICE</a> if you need one removed.
 </p>
 
 <p align="center" style="color:#F1551D; font-family:JetBrains Mono; font-size:18px;">
