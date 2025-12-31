@@ -2,7 +2,7 @@
 <!-- <p align="center"><img src="YOUR_BANNER_URL_HERE" alt="DTOS-Pywal Banner" /></p> -->
 
 <h1 align="center">🦁 DTOS-Pywal 🦁</h1>
-<h3 align="center">Pywal-driven DT desktop pack for Arch-based systems</h3>
+<h3 align="center">Pywal-driven Derek Taylor–inspired tiling desktop pack for Arch-based systems</h3>
 
 <p align="center">A Derek Taylor–inspired, keyboard-first setup with pywal-powered colors and offline-friendly bundles.</p>
 
