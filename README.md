@@ -47,7 +47,6 @@ cd DTOS-Pywal
 chmod +x install.sh
 ./install.sh
 ```
-<p><strong>Quick start:</strong> if you cloned the repo, just run <code>chmod +x install.sh && ./install.sh</code>.</p>
 
 <p align="center">━━✦━━</p>
 
