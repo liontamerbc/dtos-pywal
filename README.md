@@ -40,6 +40,7 @@ DTOS-Pywal/
 ```
 
 <h3 align="center">🚀 Install</h3>
+<p align="center"><strong>Requires:</strong> Arch/Arch-based distro with <code>pacman</code> and <code>sudo</code>.</p>
 
 ```bash
 unzip DTOS-Pywal.zip
@@ -58,6 +59,8 @@ chmod +x install.sh
   <li><strong>Wallpapers:</strong> installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; to add your own, copy images into that folder (sudo required) so <code>dm-setbg</code>/wal can see them.</li>
   <li><strong>SDDM:</strong> enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
 </ul>
+
+<p><strong>Need to reapply configs later?</strong> Run <code>./apply-customizations.sh</code> from the repo to re-copy bundled configs without rerunning the installer.</p>
 
 <h3 align="center">🔄 Repack For Sharing (optional)</h3>
 
