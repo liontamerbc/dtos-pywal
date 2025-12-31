@@ -20,9 +20,13 @@
 
 <ul>
   <li>Qtile and AwesomeWM configs with wal-aware color hooks.</li>
+  <br>
   <li>Pywal hooks/templates so GTK/KDE, icons, and terminals follow your wallpaper.</li>
+  <br>
   <li>dmscripts and shell-color-scripts bundled for offline installs.</li>
+  <br>
   <li>paru AUR helper plus optional SDDM enablement.</li>
+  <br>
   <li>DTOS wallpapers copied system-wide to <code>/usr/share/backgrounds/dtos-backgrounds</code>.</li>
 </ul>
 
