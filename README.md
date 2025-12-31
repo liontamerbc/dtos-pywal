@@ -52,11 +52,11 @@ chmod +x install.sh
 
 <h3 align="center">🎨 After Installation</h3>
 <ul>
-  <li>Pywal auto-apply: use the included <code>dm-setbg</code> picker (dmenu/bemenu/wofi). It sets the wallpaper and runs wal immediately so colors follow without extra steps.</li>
-  <li>Login restore: Qtile and Awesome autostart re-apply wal for your last chosen wallpaper; bars/widgets and GTK/KDE recolor on login.</li>
-  <li>Outside dm-setbg: use <code>wal-wallpaper /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> to set the wallpaper and run wal together. A systemd watcher also re-applies wal whenever the wallpaper cache changes.</li>
-  <li>Wallpapers: installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; to add your own, copy images into that folder (sudo required) so <code>dm-setbg</code>/wal can see them.</li>
-  <li>SDDM: enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
+  <li><strong>Pywal auto-apply:</strong> use the included <code>dm-setbg</code> picker (dmenu/bemenu/wofi). It sets the wallpaper and runs wal immediately so colors follow without extra steps.</li>
+  <li><strong>Login restore:</strong> Qtile and Awesome autostart re-apply wal for your last chosen wallpaper; bars/widgets and GTK/KDE recolor on login.</li>
+  <li><strong>Outside dm-setbg:</strong> use <code>wal-wallpaper /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> to set the wallpaper and run wal together. A systemd watcher also re-applies wal whenever the wallpaper cache changes.</li>
+  <li><strong>Wallpapers:</strong> installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; to add your own, copy images into that folder (sudo required) so <code>dm-setbg</code>/wal can see them.</li>
+  <li><strong>SDDM:</strong> enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
 </ul>
 
 <h3 align="center">🔄 Repack For Sharing (optional)</h3>
