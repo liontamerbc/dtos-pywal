@@ -20,13 +20,9 @@
 
 <ul>
   <li>Qtile and AwesomeWM configs with wal-aware color hooks.</li>
-  <br>
   <li>Pywal hooks/templates so GTK/KDE, icons, and terminals follow your wallpaper.</li>
-  <br>
   <li>dmscripts and shell-color-scripts bundled for offline installs.</li>
-  <br>
   <li>paru AUR helper plus optional SDDM enablement.</li>
-  <br>
   <li>DTOS wallpapers copied system-wide to <code>/usr/share/backgrounds/dtos-backgrounds</code>.</li>
 </ul>
 
@@ -57,13 +53,9 @@ chmod +x install.sh
 <h3 align="center">🎨 After Installation</h3>
 <ul>
   <li><strong>Pywal auto-apply:</strong> use the included <code>dm-setbg</code> picker (dmenu/bemenu/wofi). It sets the wallpaper and runs wal immediately so colors follow without extra steps.</li>
-  <br>
   <li><strong>Login restore:</strong> Qtile and Awesome autostart re-apply wal for your last chosen wallpaper; bars/widgets and GTK/KDE recolor on login.</li>
-  <br>
   <li><strong>Outside dm-setbg:</strong> use <code>wal-wallpaper /usr/share/backgrounds/dtos-backgrounds/&lt;file&gt;</code> to set the wallpaper and run wal together. A systemd watcher also re-applies wal whenever the wallpaper cache changes.</li>
-  <br>
   <li><strong>Wallpapers:</strong> installer copies bundled images into <code>/usr/share/backgrounds/dtos-backgrounds</code>; to add your own, copy images into that folder (sudo required) so <code>dm-setbg</code>/wal can see them.</li>
-  <br>
   <li><strong>SDDM:</strong> enable with <code>sudo systemctl enable sddm</code> if you chose to install it.</li>
 </ul>
 
