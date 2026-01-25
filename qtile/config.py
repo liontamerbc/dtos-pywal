@@ -59,6 +59,7 @@ myVirt = "virt-manager"
 myOffice = "libreoffice"
 myPrime = "primevideo"
 myNetflix = "netflix"
+myDisney = "disneyplus"
 myYouTube = "youtube"
 myYTMusic = "youtube-music-desktop-app"
 myReddit = "reddit-desktop-bin"
@@ -314,6 +315,10 @@ keys = [
         lazy.function(focus_group_on_screen("VID")),
         lazy.spawn(myNetflix),
         desc="Netflix"),
+    Key([mod], "d",
+        lazy.function(focus_group_on_screen("VID")),
+        lazy.spawn(myDisney),
+        desc="Disney+"),
     Key([mod], "c",
         lazy.function(focus_group_on_screen("CHAT")),
         lazy.spawn(myChat),
